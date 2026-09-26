@@ -1,0 +1,108 @@
+#:import dp kivy.metrics.dp
+
+<ArchiveItemRow@ButtonBehavior+BoxLayout>:
+    date_text: ''
+    title_text: ''
+    image_path: ''
+    size_hint_y: None
+    height: dp(90)
+    padding: dp(10)
+    spacing: dp(10)
+    canvas.before:
+        Color:
+            rgba: 0.09, 0.11, 0.17, 1
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(8)]
+
+    AsyncImage:
+        source: root.image_path
+        size_hint_x: None
+        width: dp(70)
+        allow_stretch: True
+        keep_ratio: True
+
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: root.title_text
+            font_name: app.font_name
+            font_size: '15sp'
+            bold: True
+            color: 1, 1, 1, 1
+            text_size: self.width, None
+            halign: 'right'
+            size_hint_y: None
+            height: self.texture_size[1]
+        Label:
+            text: root.date_text
+            font_name: app.font_name
+            font_size: '12sp'
+            color: 0.7, 0.75, 0.85, 1
+            text_size: self.width, None
+            halign: 'right'
+            size_hint_y: None
+            height: self.texture_size[1]
+
+
+<ArchiveScreen>:
+    name: 'archive'
+    BoxLayout:
+        orientation: 'vertical'
+
+        BoxLayout:
+            size_hint_y: None
+            height: dp(56)
+            padding: dp(12), 0
+            canvas.before:
+                Color:
+                    rgba: 0.09, 0.12, 0.2, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Label:
+                text: 'الأرشيف'
+                font_name: app.font_name
+                font_size: '20sp'
+                bold: True
+                color: 1, 1, 1, 1
+                halign: 'right'
+                text_size: self.size
+                valign: 'middle'
+
+        Label:
+            text: 'لا توجد صور محفوظة في الأرشيف بعد'
+            font_name: app.font_name
+            color: 0.6, 0.65, 0.75, 1
+            size_hint_y: None
+            height: dp(60) if not root.items else 0
+            opacity: 1 if not root.items else 0
+
+        ScrollView:
+            do_scroll_x: False
+            BoxLayout:
+                id: list_box
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(12)
+                spacing: dp(8)
+
+        NavBar:
+            NavButton:
+                label_text: 'اليوم'
+                on_release: app.go_to('today', 'right')
+            NavButton:
+                label_text: 'الأرشيف'
+                active: True
+                on_release: app.go_to('archive')
+            NavButton:
+                label_text: 'بحث'
+                on_release: app.go_to('search')
+            NavButton:
+                label_text: 'مساهماتي'
+                on_release: app.go_to('contributions')
+            NavButton:
+                label_text: 'عن التطبيق'
+                on_release: app.go_to('about')
