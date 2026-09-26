@@ -1,0 +1,88 @@
+#:import dp kivy.metrics.dp
+
+<SearchScreen>:
+    name: 'search'
+    BoxLayout:
+        orientation: 'vertical'
+
+        BoxLayout:
+            size_hint_y: None
+            height: dp(56)
+            padding: dp(12), 0
+            canvas.before:
+                Color:
+                    rgba: 0.09, 0.12, 0.2, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Label:
+                text: 'بحث بتاريخ'
+                font_name: app.font_name
+                font_size: '20sp'
+                bold: True
+                color: 1, 1, 1, 1
+                halign: 'right'
+                text_size: self.size
+                valign: 'middle'
+
+        BoxLayout:
+            size_hint_y: None
+            height: dp(56)
+            padding: dp(16), dp(8)
+            spacing: dp(8)
+
+            TextInput:
+                id: date_input
+                hint_text: 'YYYY-MM-DD مثال: 2026-01-15'
+                font_name: app.font_name
+                multiline: False
+                halign: 'right'
+                padding: dp(10), dp(14)
+                background_color: 0.12, 0.14, 0.2, 1
+                foreground_color: 1, 1, 1, 1
+                hint_text_color: 0.5, 0.55, 0.65, 1
+                cursor_color: 1, 1, 1, 1
+
+            Button:
+                text: 'بحث'
+                font_name: app.font_name
+                size_hint_x: None
+                width: dp(80)
+                background_color: 0.15, 0.3, 0.5, 1
+                on_release: root.do_search(date_input.text)
+
+        Label:
+            id: hint_label
+            text: root.status_message
+            font_name: app.font_name
+            size_hint_y: None
+            height: dp(30) if root.status_message else 0
+            color: (1, 0.4, 0.4, 1) if root.is_error else (0.7, 0.75, 0.85, 1)
+
+        ScrollView:
+            do_scroll_x: False
+            BoxLayout:
+                id: result_box
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(16)
+                spacing: dp(12)
+
+        NavBar:
+            NavButton:
+                label_text: 'اليوم'
+                on_release: app.go_to('today', 'right')
+            NavButton:
+                label_text: 'الأرشيف'
+                on_release: app.go_to('archive', 'right')
+            NavButton:
+                label_text: 'بحث'
+                active: True
+                on_release: app.go_to('search')
+            NavButton:
+                label_text: 'مساهماتي'
+                on_release: app.go_to('contributions')
+            NavButton:
+                label_text: 'عن التطبيق'
+                on_release: app.go_to('about')
