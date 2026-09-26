@@ -1,0 +1,270 @@
+#:import dp kivy.metrics.dp
+
+<ContributionItemRow@BoxLayout>:
+    item_id: ''
+    title_text: ''
+    desc_text: ''
+    date_text: ''
+    category_text: ''
+    image_path: ''
+    size_hint_y: None
+    height: dp(150)
+    padding: dp(10)
+    spacing: dp(10)
+    canvas.before:
+        Color:
+            rgba: 0.09, 0.11, 0.17, 1
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(8)]
+
+    AsyncImage:
+        source: root.image_path if root.image_path else ''
+        size_hint_x: None
+        width: dp(100) if root.image_path else 0
+        allow_stretch: True
+        keep_ratio: True
+
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: dp(4)
+
+        BoxLayout:
+            size_hint_y: None
+            height: dp(24)
+            Label:
+                text: root.category_text
+                font_name: app.font_name
+                font_size: '11sp'
+                color: 1, 0.85, 0.2, 1
+                size_hint_x: None
+                width: dp(70)
+                halign: 'right'
+                text_size: self.size
+            Label:
+                text: root.date_text
+                font_name: app.font_name
+                font_size: '11sp'
+                color: 0.6, 0.65, 0.75, 1
+                halign: 'left'
+                text_size: self.size
+
+        Label:
+            text: root.title_text
+            font_name: app.font_name
+            font_size: '15sp'
+            bold: True
+            color: 1, 1, 1, 1
+            text_size: self.width, None
+            halign: 'right'
+            size_hint_y: None
+            height: self.texture_size[1]
+
+        Label:
+            text: root.desc_text
+            font_name: app.font_name
+            font_size: '12sp'
+            color: 0.8, 0.82, 0.88, 1
+            text_size: self.width, None
+            halign: 'right'
+            shorten: True
+            max_lines: 3
+
+        BoxLayout:
+            size_hint_y: None
+            height: dp(30)
+            spacing: dp(6)
+            Button:
+                text: 'تعديل'
+                font_name: app.font_name
+                font_size: '11sp'
+                background_color: 0.15, 0.3, 0.5, 1
+                on_release: app.root.get_screen('contributions').edit_item(root.item_id)
+            Button:
+                text: 'حذف'
+                font_name: app.font_name
+                font_size: '11sp'
+                background_color: 0.5, 0.2, 0.2, 1
+                on_release: app.root.get_screen('contributions').delete_item(root.item_id)
+
+
+<ContributionsScreen>:
+    name: 'contributions'
+    BoxLayout:
+        orientation: 'vertical'
+
+        BoxLayout:
+            size_hint_y: None
+            height: dp(56)
+            padding: dp(12), 0
+            canvas.before:
+                Color:
+                    rgba: 0.09, 0.12, 0.2, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Label:
+                text: 'مساهماتي'
+                font_name: app.font_name
+                font_size: '20sp'
+                bold: True
+                color: 1, 1, 1, 1
+                halign: 'right'
+                text_size: self.size
+                valign: 'middle'
+            Button:
+                size_hint_x: None
+                width: dp(48)
+                text: '+'
+                font_size: '24sp'
+                background_color: 0, 0, 0, 0
+                color: 1, 0.85, 0.2, 1
+                on_release: root.open_add_form()
+
+        Label:
+            text: 'لا توجد مساهمات بعد. اضغط + لإضافة أول مساهمة.'
+            font_name: app.font_name
+            color: 0.6, 0.65, 0.75, 1
+            size_hint_y: None
+            height: dp(60) if not root.items else 0
+            opacity: 1 if not root.items else 0
+
+        ScrollView:
+            do_scroll_x: False
+            BoxLayout:
+                id: list_box
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(12)
+                spacing: dp(8)
+
+        NavBar:
+            NavButton:
+                label_text: 'اليوم'
+                on_release: app.go_to('today', 'right')
+            NavButton:
+                label_text: 'الأرشيف'
+                on_release: app.go_to('archive', 'right')
+            NavButton:
+                label_text: 'بحث'
+                on_release: app.go_to('search', 'right')
+            NavButton:
+                label_text: 'مساهماتي'
+                active: True
+                on_release: app.go_to('contributions')
+            NavButton:
+                label_text: 'عن التطبيق'
+                on_release: app.go_to('about')
+
+
+<ContributionFormPopup>:
+    title: root.form_title
+    size_hint: 0.9, 0.85
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(16)
+        spacing: dp(10)
+
+        ScrollView:
+            do_scroll_x: False
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: dp(10)
+
+                TextInput:
+                    id: title_input
+                    hint_text: 'العنوان'
+                    font_name: app.font_name
+                    multiline: False
+                    halign: 'right'
+                    size_hint_y: None
+                    height: dp(44)
+                    background_color: 0.12, 0.14, 0.2, 1
+                    foreground_color: 1, 1, 1, 1
+                    hint_text_color: 0.5, 0.55, 0.65, 1
+
+                TextInput:
+                    id: desc_input
+                    hint_text: 'الوصف'
+                    font_name: app.font_name
+                    multiline: True
+                    halign: 'right'
+                    size_hint_y: None
+                    height: dp(120)
+                    background_color: 0.12, 0.14, 0.2, 1
+                    foreground_color: 1, 1, 1, 1
+                    hint_text_color: 0.5, 0.55, 0.65, 1
+
+                TextInput:
+                    id: date_input
+                    hint_text: 'التاريخ (YYYY-MM-DD)'
+                    font_name: app.font_name
+                    multiline: False
+                    halign: 'right'
+                    size_hint_y: None
+                    height: dp(44)
+                    background_color: 0.12, 0.14, 0.2, 1
+                    foreground_color: 1, 1, 1, 1
+                    hint_text_color: 0.5, 0.55, 0.65, 1
+
+                BoxLayout:
+                    size_hint_y: None
+                    height: dp(44)
+                    spacing: dp(6)
+                    ToggleButton:
+                        id: cat_observation
+                        text: 'رصد'
+                        font_name: app.font_name
+                        group: 'category'
+                        state: 'down'
+                    ToggleButton:
+                        id: cat_article
+                        text: 'مقال'
+                        font_name: app.font_name
+                        group: 'category'
+                    ToggleButton:
+                        id: cat_news
+                        text: 'خبر'
+                        font_name: app.font_name
+                        group: 'category'
+
+                Button:
+                    text: root.image_button_text
+                    font_name: app.font_name
+                    size_hint_y: None
+                    height: dp(44)
+                    background_color: 0.2, 0.25, 0.35, 1
+                    on_release: root.pick_image()
+
+                Image:
+                    id: preview_image
+                    source: root.selected_image_path
+                    size_hint_y: None
+                    height: dp(140) if root.selected_image_path else 0
+                    allow_stretch: True
+
+                Label:
+                    text: root.form_error
+                    font_name: app.font_name
+                    color: 1, 0.4, 0.4, 1
+                    size_hint_y: None
+                    height: dp(30) if root.form_error else 0
+
+        BoxLayout:
+            size_hint_y: None
+            height: dp(48)
+            spacing: dp(8)
+            Button:
+                text: 'إلغاء'
+                font_name: app.font_name
+                background_color: 0.3, 0.3, 0.3, 1
+                on_release: root.dismiss()
+            Button:
+                text: 'حفظ'
+                font_name: app.font_name
+                background_color: 0.15, 0.45, 0.35, 1
+                on_release: root.submit()
