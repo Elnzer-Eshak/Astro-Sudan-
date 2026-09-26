@@ -1,0 +1,179 @@
+#:import dp kivy.metrics.dp
+
+<TodayScreen>:
+    name: 'today'
+    BoxLayout:
+        orientation: 'vertical'
+
+        # -- الرأس --
+        BoxLayout:
+            size_hint_y: None
+            height: dp(56)
+            padding: dp(12), 0
+            canvas.before:
+                Color:
+                    rgba: 0.09, 0.12, 0.2, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Label:
+                text: 'أسترو سودان'
+                font_name: app.font_name
+                font_size: '20sp'
+                bold: True
+                color: 1, 1, 1, 1
+                halign: 'right'
+                text_size: self.size
+                valign: 'middle'
+            Button:
+                size_hint_x: None
+                width: dp(56)
+                text: '\u21bb'
+                font_size: '20sp'
+                background_color: 0, 0, 0, 0
+                color: 1, 0.85, 0.2, 1
+                on_release: root.load_today()
+
+        # -- المحتوى --
+        ScrollView:
+            do_scroll_x: False
+            BoxLayout:
+                id: content_box
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(16)
+                spacing: dp(12)
+
+                Label:
+                    id: loading_label
+                    text: 'جاري التحميل...'
+                    font_name: app.font_name
+                    size_hint_y: None
+                    height: dp(40) if root.is_loading else 0
+                    opacity: 1 if root.is_loading else 0
+                    color: 0.8, 0.8, 0.85, 1
+
+                Label:
+                    id: error_label
+                    text: root.error_message
+                    font_name: app.font_name
+                    size_hint_y: None
+                    height: self.texture_size[1] if root.error_message else 0
+                    opacity: 1 if root.error_message else 0
+                    color: 1, 0.4, 0.4, 1
+                    text_size: self.width, None
+                    halign: 'center'
+
+                AsyncImage:
+                    id: apod_image
+                    source: root.image_source
+                    size_hint_y: None
+                    height: dp(280) if root.image_source else 0
+                    allow_stretch: True
+                    keep_ratio: True
+
+                Label:
+                    id: date_label
+                    text: root.apod_date
+                    font_name: app.font_name
+                    font_size: '13sp'
+                    color: 0.7, 0.75, 0.85, 1
+                    size_hint_y: None
+                    height: self.texture_size[1]
+                    text_size: self.width, None
+                    halign: 'right'
+
+                # -- شريط أزرار الإجراءات --
+                BoxLayout:
+                    size_hint_y: None
+                    height: dp(44)
+                    spacing: dp(8)
+                    Button:
+                        text: 'حفظ الصورة'
+                        font_name: app.font_name
+                        background_color: 0.15, 0.45, 0.35, 1
+                        on_release: root.save_current()
+                    Button:
+                        text: 'مشاركة'
+                        font_name: app.font_name
+                        background_color: 0.15, 0.3, 0.5, 1
+                        on_release: root.share_current()
+
+                # -- منطقة محتوى NASA: عنوان + شرح، بزرار تبديل EN/AR خاص بيها فقط --
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: self.minimum_height
+                    spacing: dp(8)
+                    padding: dp(12)
+                    canvas.before:
+                        Color:
+                            rgba: 0.09, 0.11, 0.17, 1
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [dp(10)]
+
+                    BoxLayout:
+                        size_hint_y: None
+                        height: dp(32)
+                        Label:
+                            text: 'بيانات ناسا (Nasa)'
+                            font_name: app.font_name
+                            font_size: '12sp'
+                            color: 0.6, 0.65, 0.75, 1
+                            halign: 'right'
+                            text_size: self.size
+                            valign: 'middle'
+                        Button:
+                            size_hint_x: None
+                            width: dp(110)
+                            text: 'جاري الترجمة...' if root.is_translating else ('English' if root.showing_translation else 'ترجم للعربي')
+                            font_name: app.font_name
+                            font_size: '12sp'
+                            background_color: 0.35, 0.25, 0.5, 1
+                            disabled: root.is_translating
+                            on_release: root.toggle_translation()
+
+                    Label:
+                        id: title_label
+                        text: root.apod_title
+                        font_name: app.font_name
+                        font_size: '18sp'
+                        bold: True
+                        color: 1, 1, 1, 1
+                        size_hint_y: None
+                        height: self.texture_size[1]
+                        text_size: self.width, None
+                        halign: 'right' if not root.showing_translation else 'left'
+
+                    Label:
+                        id: explanation_label
+                        text: root.apod_explanation
+                        font_name: app.font_name
+                        font_size: '15sp'
+                        color: 0.9, 0.9, 0.93, 1
+                        size_hint_y: None
+                        height: self.texture_size[1]
+                        text_size: self.width, None
+                        halign: 'right' if root.showing_translation else 'left'
+
+        # -- شريط التنقل السفلي --
+        NavBar:
+            NavButton:
+                label_text: 'اليوم'
+                active: True
+                on_release: app.go_to('today')
+            NavButton:
+                label_text: 'الأرشيف'
+                on_release: app.go_to('archive')
+            NavButton:
+                label_text: 'بحث'
+                on_release: app.go_to('search')
+            NavButton:
+                label_text: 'مساهماتي'
+                on_release: app.go_to('contributions')
+            NavButton:
+                label_text: 'عن التطبيق'
+                on_release: app.go_to('about')
