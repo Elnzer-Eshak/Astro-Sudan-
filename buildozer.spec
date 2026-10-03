@@ -1,27 +1,23 @@
+
 [app]
-title = أسترو سودان
-package.name = astrosudan
-package.domain = org.elnzer
-
+title = Noc Sudan
+package.name = nocsudan
+package.domain = org.nocsudan
 source.dir = .
-source.include_exts = py,png,jpg,jpeg,kv,atlas,ttf,json
+source.include_exts = py,png,jpg,ttf
+source.include_patterns = assets/*
+source.exclude_dirs = .github,bin,.buildozer,__pycache__,screens,kv,locales
 version = 1.0.0
-
-requirements = python3,kivy==2.3.0,requests,pillow,plyer,certifi,urllib3,idna,charset-normalizer
-
-# صلاحيات أندرويد: إنترنت (لجلب بيانات NASA)، قراءة/كتابة تخزين (حفظ الصور
-# واختيار صور من الجاليري)
-android.permissions = INTERNET,READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE,READ_MEDIA_IMAGES
-
+requirements = python3,kivy==2.3.0,requests,urllib3,chardet,idna,certifi,arabic-reshaper==3.0.0,python-bidi==0.4.2,six
+icon.filename = %(source.dir)s/assets/icon.png
 orientation = portrait
 fullscreen = 0
-
-android.api = 34
+android.permissions = INTERNET,ACCESS_NETWORK_STATE
+android.api = 33
 android.minapi = 21
-android.ndk = 25b
-android.archs = arm64-v8a
+android.archs = arm64-v8a, armeabi-v7a
+android.accept_sdk_license = True
 android.allow_backup = True
-
 [buildozer]
 log_level = 2
 warn_on_root = 1
